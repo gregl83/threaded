@@ -1,10 +1,10 @@
 use std::thread;
+
 use crossbeam::channel::{
     Sender,
     Receiver,
     unbounded
 };
-
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
