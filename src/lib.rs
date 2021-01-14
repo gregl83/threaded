@@ -1,9 +1,10 @@
 use std::thread;
-use std::sync::{
-    mpsc,
-    Arc,
-    Mutex
+use crossbeam::channel::{
+    Sender,
+    Receiver,
+    unbounded
 };
+
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
@@ -18,9 +19,9 @@ struct Worker {
 }
 
 impl Worker {
-    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Message>>>) -> Worker {
+    fn new(id: usize, receiver: Receiver<Message>) -> Worker {
         let thread = thread::spawn(move || loop {
-            let message = receiver.lock().unwrap().recv().unwrap();
+            let message = receiver.recv().unwrap();
 
             match message {
                 Message::NewJob(job) => {
@@ -41,7 +42,7 @@ impl Worker {
 
 pub struct ThreadPool {
     workers: Vec<Worker>,
-    sender: mpsc::Sender<Message>,
+    sender: Sender<Message>,
 }
 
 impl ThreadPool {
@@ -55,14 +56,13 @@ impl ThreadPool {
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
-        let (sender, receiver) = mpsc::channel();
-
-        let receiver = Arc::new(Mutex::new(receiver));
+        // create crossbeam crate channel of unbounded capacity
+        let (sender, receiver) = unbounded();
 
         let mut workers = Vec::with_capacity(size);
 
         for id in 0..size {
-            workers.push(Worker::new(id, Arc::clone(&receiver)));
+            workers.push(Worker::new(id, receiver.clone()));
         }
 
         ThreadPool { workers, sender }
