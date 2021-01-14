@@ -13,6 +13,7 @@ enum Message {
     Terminate,
 }
 
+#[allow(dead_code)]
 struct Worker {
     id: usize,
     thread: Option<thread::JoinHandle<()>>,
@@ -100,8 +101,56 @@ impl Drop for ThreadPool {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
+    use std::sync::Arc;
+    use std::sync::atomic::{
+        Ordering,
+        AtomicBool
+    };
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn executes_spsc_job() {
+        let tp = ThreadPool::new(1);
+        let executed = Arc::new(AtomicBool::new(false));
+        {
+            let executed = executed.clone();
+            tp.execute(move || {
+                executed.swap(true, Ordering::SeqCst);
+            });
+        }
+        drop(tp);
+        assert_eq!(executed.load(Ordering::SeqCst), true);
+    }
+
+    #[test]
+    fn executes_spmc_jobs() {
+        // fixme - verify jobs run in parallel (worker id, overlap, etc)
+        let tp = ThreadPool::new(2);
+        let job1_executed = Arc::new(AtomicBool::new(false));
+        let job2_executed = Arc::new(AtomicBool::new(false));
+        {
+            let job1_executed = job1_executed.clone();
+            tp.execute(move || {
+                job1_executed.swap(true, Ordering::SeqCst);
+            });
+        }
+        {
+            let job2_executed = job2_executed.clone();
+            tp.execute(move || {
+                job2_executed.swap(true, Ordering::SeqCst);
+            });
+        }
+        drop(tp);
+        assert_eq!(job1_executed.load(Ordering::SeqCst), true);
+        assert_eq!(job2_executed.load(Ordering::SeqCst), true);
+    }
+
+    #[test]
+    fn thread_pool_capacity_eq_num_of_workers() {
+        let size = 2;
+        let tp = ThreadPool::new(size);
+        let expected = size;
+        assert_eq!(tp.capacity(), expected);
     }
 }
