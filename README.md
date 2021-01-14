@@ -1,6 +1,6 @@
 # threaded
 
-Minimalist Thread Pool
+Minimalist Thread Pool in Rust
 
 ## Stability
 
