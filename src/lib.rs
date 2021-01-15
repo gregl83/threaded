@@ -1,10 +1,12 @@
 use std::thread;
+use std::time::Instant;
 
 use crossbeam::channel::{
     Sender,
     Receiver,
     unbounded
 };
+use uuid::Uuid;
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
@@ -15,12 +17,13 @@ enum Message {
 
 #[allow(dead_code)]
 struct Worker {
-    id: usize,
+    id: Uuid,
     thread: Option<thread::JoinHandle<()>>,
+    created: Instant
 }
 
 impl Worker {
-    fn new(id: usize, receiver: Receiver<Message>) -> Worker {
+    fn new(receiver: Receiver<Message>) -> Worker {
         let thread = thread::spawn(move || loop {
             let message = receiver.recv().unwrap();
 
@@ -35,8 +38,9 @@ impl Worker {
         });
 
         Worker {
-            id,
+            id: Uuid::new_v4(),
             thread: Some(thread),
+            created: Instant::now()
         }
     }
 }
@@ -62,9 +66,8 @@ impl ThreadPool {
         let (sender, receiver) = unbounded();
 
         let mut workers = Vec::with_capacity(size);
-
-        for id in 0..size {
-            workers.push(Worker::new(id, receiver.clone()));
+        for _ in 0..size {
+            workers.push(Worker::new(receiver.clone()));
         }
 
         ThreadPool { workers, sender }

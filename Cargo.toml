@@ -14,3 +14,4 @@ homepage = "https://crates.io/crates/threaded"
 
 [dependencies]
 crossbeam = "0.8.0"
+uuid = { version = "0.8.2", features = ["serde", "v4"] }
