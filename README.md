@@ -35,7 +35,7 @@ let _num_workers = tp.capacity(); // get capacity of pool
 drop(tp); // manually trigger drop and join threads
 ```
 
-See [docs.rs/threaded](https://docs.rs/threaded/0.2.0/threaded/).
+See [docs.rs/threaded](https://docs.rs/threaded/).
 
 ## Credits
 
