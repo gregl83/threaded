@@ -8,7 +8,7 @@ Glanceable source code for prototypes seeking brevity with transparency.
 
 Experimental
 
-Threaded is not fully covered nor benched let along comparatively performance tested.
+Threaded is not fully covered nor benched let alone comparatively performance tested.
 
 ## Branching Strategy
 
