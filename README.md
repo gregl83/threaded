@@ -16,6 +16,10 @@ Threaded is not fully covered nor benched let alone comparatively performance te
 
 ## Usage
 
+#### Execute Function Using Thread Pool
+
+Single producer, multiple consumer (spmc) thread pool with single function execution.
+
 ```rust
 use threaded::ThreadPool;
 
