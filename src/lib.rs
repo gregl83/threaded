@@ -54,11 +54,11 @@ pub struct ThreadPool {
 impl ThreadPool {
     /// Create a new ThreadPool.
     ///
-    /// The size is the number of threads in the pool.
+    /// The capacity is the number of threads in the pool.
     ///
     /// # Panics
     ///
-    /// The `new` function will panic if the size is zero.
+    /// The `new` function will panic if the capacity is zero.
     ///
     /// # Examples
     ///
@@ -82,16 +82,16 @@ impl ThreadPool {
     ///
     /// drop(tp); // block main thread until execute finishes (uses handle.join())
     ///
-    /// assert_eq!(has_executed, true);
+    /// assert_eq!(has_executed.load(Ordering::SeqCst), true);
     /// ```
-    pub fn new(size: usize) -> ThreadPool {
-        assert!(size > 0);
+    pub fn new(capacity: usize) -> ThreadPool {
+        assert!(capacity > 0);
 
         // create crossbeam crate channel of unbounded capacity
         let (sender, receiver) = unbounded();
 
-        let mut workers = Vec::with_capacity(size);
-        for _ in 0..size {
+        let mut workers = Vec::with_capacity(capacity);
+        for _ in 0..capacity {
             workers.push(Worker::new(receiver.clone()));
         }
 
@@ -141,6 +141,12 @@ mod tests {
     };
 
     #[test]
+    #[should_panic]
+    fn invalid_capacity_size() {
+        let _ = ThreadPool::new(0);
+    }
+
+    #[test]
     fn executes_spsc_job() {
         let tp = ThreadPool::new(1);
         let executed = Arc::new(AtomicBool::new(false));
@@ -179,9 +185,9 @@ mod tests {
 
     #[test]
     fn thread_pool_capacity_eq_num_of_workers() {
-        let size = 2;
-        let tp = ThreadPool::new(size);
-        let expected = size;
+        let capacity = 2;
+        let tp = ThreadPool::new(capacity);
+        let expected = capacity;
         assert_eq!(tp.capacity(), expected);
     }
 }
