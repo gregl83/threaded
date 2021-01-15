@@ -2,9 +2,13 @@
 
 Minimalist Thread Pool in Rust
 
+Glanceable source code for prototypes seeking brevity.
+
 ## Stability
 
-Experimental - Not for production use
+Experimental
+
+Threaded is not fully covered nor benched let along comparatively performance tested.
 
 ## Branching Strategy
 
