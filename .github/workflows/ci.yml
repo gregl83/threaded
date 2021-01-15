@@ -2,38 +2,35 @@ name: CI
 
 on:
   push:
-    branches: ["master"]
+    branches: [ main ]
   pull_request:
-    branches: ["master"]
+    branches: [ main ]
 
 env:
-  RUSTFLAGS: -Dwarnings
-  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
 
 jobs:
   tests-pass:
     name: all systems go
     runs-on: ubuntu-latest
     needs:
+      - build
       - test
     steps:
       - run: exit 0
 
-  test:
-    name: test threaded
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-          - macos-latest
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Rust
-        run: rustup update stable
+      - name: Build
+        run: cargo build --verbose
 
-      - name: test threaded full
-        run: cargo test --features full
-        working-directory: threaded
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run tests
+        run: cargo test --verbose
