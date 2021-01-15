@@ -7,15 +7,21 @@ Minimalist Thread Pool in Rust
 
 Glanceable source code for prototypes seeking brevity with transparency.
 
-**Stability:** Experimental
+## Stability
+
+Experimental
 
 Threaded is not fully covered nor benched let alone comparatively performance tested.
 
-**Branching Strategy:** [Trunk Based Development](https://trunkbaseddevelopment.com/)
+## Branching Strategy
+
+[Trunk Based Development](https://trunkbaseddevelopment.com/)
 
 ## Usage
 
-**Create a fixed capacity thread pool.**
+### New ThreadPool
+
+*Create a fixed capacity thread pool:*
 
 ```rust
 use threaded::ThreadPool;
@@ -29,7 +35,9 @@ let tp = ThreadPool::new(2);
 // drop joins worker threads subsequently blocking main thread until workers finish
 ```
 
-**Single producer, multiple consumer (spmc) thread pool with single function/closure execution.**
+### Execute Function using ThreadPool
+
+*Single producer, multiple consumer (spmc) thread pool with single function/closure execution:*
 
 ```rust
 tp.execute(|| println!("hello threaded!"));
