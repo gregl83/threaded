@@ -59,6 +59,31 @@ impl ThreadPool {
     /// # Panics
     ///
     /// The `new` function will panic if the size is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::sync::Arc;
+    /// use std::sync::atomic::{ Ordering, AtomicBool };
+    /// use threaded::ThreadPool;
+    ///
+    /// let num_workers = 2;
+    /// let tp = ThreadPool::new(num_workers);
+    ///
+    /// assert_eq!(tp.capacity(), num_workers);
+    ///
+    /// let has_executed = Arc::new(AtomicBool::new(false));
+    /// {
+    ///     let has_executed = has_executed.clone();
+    ///     tp.execute(move || {
+    ///         has_executed.swap(true, Ordering::SeqCst);
+    ///     });
+    /// }
+    ///
+    /// drop(tp); // block main thread until execute finishes (uses handle.join())
+    ///
+    /// assert_eq!(has_executed, true);
+    /// ```
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
