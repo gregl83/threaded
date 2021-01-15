@@ -16,9 +16,7 @@ Threaded is not fully covered nor benched let alone comparatively performance te
 
 ## Usage
 
-#### New Thread Pool
-
-Create a fixed capacity thread pool.
+**Create a fixed capacity thread pool.**
 
 ```rust
 use threaded::ThreadPool;
@@ -32,9 +30,7 @@ let tp = ThreadPool::new(2);
 // drop joins worker threads subsequently blocking main thread until workers finish
 ```
 
-#### Execute Function Using Thread Pool
-
-Single producer, multiple consumer (spmc) thread pool with single function/closure execution.
+**Single producer, multiple consumer (spmc) thread pool with single function/closure execution.**
 
 ```rust
 tp.execute(|| println!("hello threaded!"));
