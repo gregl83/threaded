@@ -31,7 +31,7 @@ tp.execute(|| println!("hello threaded!"));
 
 ## Credits
 
-The [Rust programming language book](https://doc.rust-lang.org/book/) details key integral features needed to begin writing useful programs while adhering to community guidelines. Threaded was based directly off the book's final project ["A Web Server"](https://doc.rust-lang.org/book/ch20-00-final-project-a-web-server.html).
+The [Rust Programming Language Book](https://doc.rust-lang.org/book/) details integral features needed to begin writing useful programs while adhering to community guidelines. Threaded was based directly off the book's final project ["Building a Multithreaded Web Server"](https://doc.rust-lang.org/book/ch20-00-final-project-a-web-server.html).
 
 # License
 
