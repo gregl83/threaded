@@ -13,7 +13,6 @@ env:
   minrust: 1.45.2
 
 jobs:
-  # Depends on all action sthat are required for a "successful" CI run.
   tests-pass:
     name: all systems go
     runs-on: ubuntu-latest
@@ -33,10 +32,10 @@ jobs:
           - macos-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Install Rust
         run: rustup update stable
-      - name: Install cargo-hack
-        run: cargo install cargo-hack
+
       - name: test threaded full
         run: cargo test --features full
         working-directory: threaded
