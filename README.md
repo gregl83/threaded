@@ -1,6 +1,6 @@
 [![Crates.io](https://img.shields.io/crates/v/threaded.svg)](https://crates.io/crates/threaded)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/gregl83/threaded/blob/master/LICENSE)
-[![Build Status](https://github.com/gregl83/threaded/workflows/CI/badge.svg)](https://github.com/gregl83/threaded/actions?query=workflow%3ACI+branch%3Amaster) 
+![Build Status](https://github.com/gregl83/threaded/workflows/CI/badge.svg?branch=main)
 # threaded
 
 Minimalist Thread Pool in Rust
