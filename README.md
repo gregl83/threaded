@@ -19,11 +19,7 @@ Threaded is not fully covered nor benched let alone comparatively performance te
 
 ## Usage
 
-[Documentation](https://docs.rs/threaded/0.2.0/threaded/) provides API usage.
-
-### Examples
-
-#### Create ThreadPool
+See [docs.rs](https://docs.rs/threaded/0.2.0/threaded/).
 
 ```rust
 use threaded::ThreadPool;
@@ -31,28 +27,14 @@ use threaded::ThreadPool;
 // start thread pool with fixed capacity of 2 workers (single producer, multiple consumer; spmc)
 let tp = ThreadPool::new(2);
 
-// do something useful w/pool...
+tp.execute(|| println!("hello threaded!")); // execute function in pool
+
+let _num_workers = tp.capacity(); // get capacity of pool
 
 // once tp goes out of scope, drop is called
 // drop joins worker threads subsequently blocking main thread until workers finish
-```
 
-#### Execute Function using ThreadPool
-
-```rust
-tp.execute(|| println!("hello threaded!"));
-```
-
-#### Get Capacity of ThreadPool
-
-```rust
-let num_workers = tp.capacity();
-```
-
-#### Trigger Drop of ThreadPool
-
-```rust
-drop(tp);
+drop(tp); // manually trigger drop and join threads
 ```
 
 ## Credits
