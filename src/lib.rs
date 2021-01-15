@@ -41,6 +41,7 @@ impl Worker {
     }
 }
 
+/// Thread pool of workers awaiting execution orders.
 pub struct ThreadPool {
     workers: Vec<Worker>,
     sender: Sender<Message>,
@@ -69,10 +70,12 @@ impl ThreadPool {
         ThreadPool { workers, sender }
     }
 
+    /// Capacity of thread pool (number of workers).
     pub fn capacity(&self) -> usize {
         self.workers.len()
     }
 
+    /// Execute function/closure using worker from thread pool.
     pub fn execute<F>(&self, f: F)
         where
             F: FnOnce() + Send + 'static,
