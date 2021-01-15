@@ -16,9 +16,9 @@ Threaded is not fully covered nor benched let alone comparatively performance te
 
 ## Usage
 
-#### Execute Function Using Thread Pool
+#### New Thread Pool
 
-Single producer, multiple consumer (spmc) thread pool with single function execution.
+Create a fixed capacity thread pool.
 
 ```rust
 use threaded::ThreadPool;
@@ -26,11 +26,18 @@ use threaded::ThreadPool;
 // start thread pool with size of 2 workers
 let tp = ThreadPool::new(2);
 
-// execute job/closure using worker in thread pool
-tp.execute(|| println!("hello threaded!"));
+// do something useful w/pool...
 
-// tp out of scope triggering drop call
-// worker threads are joined resulting in block on main thread until workers finish
+// once tp goes out of scope, drop is called
+// drop joins worker threads subsequently blocking main thread until workers finish
+```
+
+#### Execute Function Using Thread Pool
+
+Single producer, multiple consumer (spmc) thread pool with single function/closure execution.
+
+```rust
+tp.execute(|| println!("hello threaded!"));
 ```
 
 ## Credits
