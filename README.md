@@ -1,12 +1,21 @@
+[![Crates.io][crates-badge]][crates-url]
+[![MIT licensed][mit-badge]][mit-url]
+[![Build Status][actions-badge]][actions-url]
+[crates-badge]: https://img.shields.io/crates/v/threaded.svg
+[crates-url]: https://crates.io/crates/threaded
+[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[mit-url]: https://github.com/gregl83/threaded/blob/master/LICENSE
+[actions-badge]: https://github.com/gregl83/threaded/workflows/CI/badge.svg
+[actions-url]: https://github.com/gregl83/threaded/actions?query=workflow%3ACI+branch%3Amaster
 # threaded
 
 Minimalist Thread Pool in Rust
 
 Glanceable source code for prototypes seeking brevity with transparency.
 
-Threaded is not fully covered nor benched let alone comparatively performance tested.
-
 **Stability:** Experimental
+
+Threaded is not fully covered nor benched let alone comparatively performance tested.
 
 **Branching Strategy:** [Trunk Based Development](https://trunkbaseddevelopment.com/)
 
