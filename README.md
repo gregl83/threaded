@@ -4,15 +4,11 @@ Minimalist Thread Pool in Rust
 
 Glanceable source code for prototypes seeking brevity with transparency.
 
-## Stability
-
-Experimental
-
 Threaded is not fully covered nor benched let alone comparatively performance tested.
 
-## Branching Strategy
+**Stability:** Experimental
 
-[Trunk Based Development](https://trunkbaseddevelopment.com/)
+**Branching Strategy:** [Trunk Based Development](https://trunkbaseddevelopment.com/)
 
 ## Usage
 
