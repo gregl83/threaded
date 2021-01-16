@@ -11,6 +11,7 @@ use crossbeam::channel::{
     unbounded
 };
 use uuid::Uuid;
+use std::ops::Sub;
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
@@ -51,6 +52,7 @@ impl Worker {
 
 /// Thread pool of workers awaiting execution orders.
 pub struct ThreadPool {
+    capacity: usize,
     workers: Vec<Worker>,
     sender: Sender<Message>,
     receiver: Receiver<Message>
@@ -59,7 +61,7 @@ pub struct ThreadPool {
 impl ThreadPool {
     /// Create a new ThreadPool.
     ///
-    /// The capacity is the number of threads in the pool.
+    /// The capacity is the number of desired threads in the pool.
     ///
     /// # Panics
     ///
@@ -100,12 +102,12 @@ impl ThreadPool {
             workers.push(Worker::new(receiver.clone()));
         }
 
-        ThreadPool { workers, sender, receiver }
+        ThreadPool { capacity, workers, sender, receiver }
     }
 
     /// Capacity of thread pool (number of workers).
     pub fn capacity(&self) -> usize {
-        self.workers.len()
+        self.capacity
     }
 
     /// Resize thread pool to new capacity
@@ -113,12 +115,29 @@ impl ThreadPool {
     /// # Panics
     ///
     /// The `resize` function will panic if the capacity is zero.
-    pub fn resize(&self, capacity: usize) {
+    ///
+    /// Caution:
+    ///     Dead workers aren't removed from pool wasting memory but is fault tolerant.
+    pub fn resize(&mut self, capacity: usize) {
         assert!(capacity > 0);
 
-        // fixme
-    }
+        let current_capacity = self.capacity() as isize;
+        let delta = current_capacity.sub(capacity as isize);
 
+        if delta.is_positive() {
+            // reduce size
+            for _ in 0..delta {
+                self.sender.send(Message::Terminate).unwrap();
+            }
+        } else {
+            // increase size
+            for _ in 0..delta.abs() {
+                self.workers.push(Worker::new(self.receiver.clone()));
+            }
+        }
+
+        self.capacity = capacity;
+    }
 
     /// Execute function/closure using worker from thread pool.
     pub fn execute<F>(&self, f: F)
@@ -156,6 +175,7 @@ mod tests {
         Ordering,
         AtomicBool
     };
+    use std::time::Duration;
 
     #[test]
     #[should_panic]
@@ -206,31 +226,34 @@ mod tests {
         let tp = ThreadPool::new(capacity);
         let expected = capacity;
         assert_eq!(tp.capacity(), expected);
+        assert_eq!(tp.capacity(), tp.workers.len());
     }
 
     #[test]
-    #[ignore]
     fn thread_pool_resize_to_bigger_capacity() {
         let capacity = 2;
         let resize_capacity = 4;
         
-        let tp = ThreadPool::new(capacity);
+        let mut tp = ThreadPool::new(capacity);
         assert_eq!(tp.capacity(), capacity);
 
         tp.resize(resize_capacity);
+
+        thread::sleep(Duration::from_millis(5));
         assert_eq!(tp.capacity(), resize_capacity);
     }
 
     #[test]
-    #[ignore]
     fn thread_pool_resize_to_smaller_capacity() {
         let capacity = 4;
         let resize_capacity = 2;
 
-        let tp = ThreadPool::new(capacity);
+        let mut tp = ThreadPool::new(capacity);
         assert_eq!(tp.capacity(), capacity);
 
         tp.resize(resize_capacity);
+
+        thread::sleep(Duration::from_millis(5));
         assert_eq!(tp.capacity(), resize_capacity);
     }
 }
