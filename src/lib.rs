@@ -1,3 +1,7 @@
+//! Minimalist Thread Pool in Rust
+//!
+//! Glanceable source code for prototypes seeking brevity with transparency.
+
 use std::thread;
 use std::time::Instant;
 
@@ -49,6 +53,7 @@ impl Worker {
 pub struct ThreadPool {
     workers: Vec<Worker>,
     sender: Sender<Message>,
+    receiver: Receiver<Message>
 }
 
 impl ThreadPool {
@@ -95,13 +100,25 @@ impl ThreadPool {
             workers.push(Worker::new(receiver.clone()));
         }
 
-        ThreadPool { workers, sender }
+        ThreadPool { workers, sender, receiver }
     }
 
     /// Capacity of thread pool (number of workers).
     pub fn capacity(&self) -> usize {
         self.workers.len()
     }
+
+    /// Resize thread pool to new capacity
+    ///
+    /// # Panics
+    ///
+    /// The `resize` function will panic if the capacity is zero.
+    pub fn resize(&self, capacity: usize) {
+        assert!(capacity > 0);
+
+        // fixme
+    }
+
 
     /// Execute function/closure using worker from thread pool.
     pub fn execute<F>(&self, f: F)
@@ -189,5 +206,31 @@ mod tests {
         let tp = ThreadPool::new(capacity);
         let expected = capacity;
         assert_eq!(tp.capacity(), expected);
+    }
+
+    #[test]
+    #[ignore]
+    fn thread_pool_resize_to_bigger_capacity() {
+        let capacity = 2;
+        let resize_capacity = 4;
+        
+        let tp = ThreadPool::new(capacity);
+        assert_eq!(tp.capacity(), capacity);
+
+        tp.resize(resize_capacity);
+        assert_eq!(tp.capacity(), resize_capacity);
+    }
+
+    #[test]
+    #[ignore]
+    fn thread_pool_resize_to_smaller_capacity() {
+        let capacity = 4;
+        let resize_capacity = 2;
+
+        let tp = ThreadPool::new(capacity);
+        assert_eq!(tp.capacity(), capacity);
+
+        tp.resize(resize_capacity);
+        assert_eq!(tp.capacity(), resize_capacity);
     }
 }
